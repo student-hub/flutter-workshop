@@ -59,7 +59,7 @@ We will now attempt to create a layout similar to the grading view in **ACS UPB 
 
 ##### AppBar
 
-The coloured strip at the top is called an `AppBar`. Let's give our `Scaffold` an `AppBar` with a meaningful `title`:
+The coloured strip at the top is called an `AppBar`. Let's give our `Scaffold` an `AppBar` with a meaningful `title`.
 
 ```dart
 class MainPage extends StatelessWidget {
@@ -175,4 +175,121 @@ You should now have an app that looks like this:
 
 <img src=screenshots/layout.png height=500>
 
+#### Add the content
+
 We're ready to add the actual content!
+
+##### Import a package
+
+Even though Flutter is a fairly new technology, the community is very active, and because it is open source there are countless available resources online that you can use. A good rule of thumb is, *don't try to reinvent the wheel*. Before starting to work on something, check if someone has done it before. You might find a useful package that you can add to the app, or maybe even a sample app that you can copy and modify for your needs.
+
+One such example is, in our case, displaying some data in the form of a pie chart in Flutter. The [pie_chart](https://pub.dev/packages/pie_chart) package is just a mere Google Search away. Get used to the resources offered by pub.dev - any package published will have documentation, statistics, instructions and an example usage. And the best part of open source? If the API doesn't quite suit your requirements but you'd like to use parts of a package, you can pretty much always just copy and modify the parts of their code you're interested in. To be safe, you can check the LICENSE file of the project, but generally all Dart packages have either an MIT or BSD license.
+
+---
+
+***Life pro tip:*** If you do fiddle with someone's package, for instance to add functionality or expose some fields, it might be a good idea to even contribute to that package itself. E-mail the owner to tell them what you'd like to do, and if they say it's okay, submit a PR! Open source points on your résumé are always useful.
+
+---
+
+Back to our app - all we need to do to use this package is to add it to our `pubspec.yaml` file under `dependencies`:
+
+```
+dependencies:
+  pie_chart: <latest version>
+```
+
+You can see the latest version in the package's name. Specifying it is not mandatory, but it is recommended. You will often see a caret next to the version specified in pubspec files (e.g. `pie_chart: ^3.1.1`), symbolising "version 3.1.1 or the newest compatible version", or ">=3.1.1 <4.0.0", since a new major version usually implies breaking changes.
+
+Android Studio will prompt you to run `flutter pub get` to update the dependencies of your project. Do so.
+
+##### Use the package
+
+Read the documentation of `pie_chart` and use the simple example to place a pie chart in our `Card`.
+
+<details>
+  <summary>Spoiler - solution</summary>
+
+  ```dart
+  Widget build(BuildContext context) {
+    Map<String, double> dataMap = new Map();
+    dataMap.putIfAbsent("Flutter", () => 5);
+    dataMap.putIfAbsent("React", () => 3);
+    dataMap.putIfAbsent("Xamarin", () => 2);
+    dataMap.putIfAbsent("Ionic", () => 2);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('A meaningful title'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Card(child: PieChart(dataMap: dataMap,)),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  ```
+
+</details><br>
+
+Normally, we shouldn't do complex operations like populating a dataset in the build method, because *it is called every time the page is reloaded or something changes*. This is particularly important for stateful widgets, which are rebuilt often.
+
+##### Check orientation
+
+Hot Reload and look at the app. Now we have the pie chart and it looks alright! However, check what happens if you rotate the device. You will most likely see an overflow. Can you tell why it happens?
+
+<details>
+  <summary>Spoiler - answer</summary>
+
+  The card's height is a third of the available height - which, in landscape mode, is the screen's width. This isn't enough to fit the entire content of the pie chart, and the package doesn't know how to deal with not having enough space.
+
+</details><br>
+
+Note that the ugly overflow warning is only visible in debug mode, for the developer to notice. In release mode, the user simply won't see the part of the widget that overflowed.
+
+---
+
+**Build modes**
+
+Flutter offers three build modes:
+- *debug mode*, used during development, allows the usage of IDE debugging tools and hot reload
+- *profile mode* is used when you want to analyze performance
+- *release mode* is the version seen by the end user
+
+The performance in debug mode is almost always worse than the other two modes. Release mode cannot be used on an emulator, but if you want to take nice screenshots you can disable the debug banner from the *Flutter Inspector* tab found on the right edge of Android Studio.
+
+<img src=screenshots/banner.png>
+
+---
+
+Layout issues can usually be solved by either defining the layout differently (we've already seen that the same thing can be done in multiple ways in Flutter) or using a different layout for landscape and portrait with an [`OrientationBuilder`](https://api.flutter.dev/flutter/widgets/OrientationBuilder-class.html).
+
+Let's change the layout yet again to fix the overflow. The easiest way is to replace the `Column` with a `ListView`, which is essentially a scrollable column. We can simply replace the word 'Column' with 'ListView' and the app will work... but if we look at the console, we will see an exception:
+
+<img src=screenshots/console.png>
+
+Flutter errors are very verbose and, more often than not, will offer the exact solution to the problem and an explanation. In our case, it tells us that an `Expanded` widget can only be within a `Flex` widget (usually a `Row` or `Column` widget). We can just remove the `Expanded` widgets now and let the pie chart package control the size of the card on its own.
+
+---
+
+**IntelliSense tip #3: removing widgets**
+
+Similar to wrapping widgets, we can also remove them easily from the tree using Android Studio. Press *Alt* + *Enter* while the cursor is on the name of any widget that has exactly one child, and you will get the option to remove it:
+
+<img src=screenshots/remove.png>
+
+---
+
+The app should now look like this:
+
+<img src=screenshots/content.png height=500>

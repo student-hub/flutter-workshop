@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,22 +36,21 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Map<String, double> dataMap = new Map();
+    dataMap.putIfAbsent("Flutter", () => 5);
+    dataMap.putIfAbsent("React", () => 3);
+    dataMap.putIfAbsent("Xamarin", () => 2);
+    dataMap.putIfAbsent("Ionic", () => 2);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('A meaningful title'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
+        child: ListView(
           children: [
-            Expanded(
-              flex: 1,
-              child: Card(child: Container()),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(),
-            )
+            Card(child: PieChart(dataMap: dataMap)),
           ],
         ),
       ),
