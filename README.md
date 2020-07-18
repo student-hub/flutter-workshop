@@ -637,3 +637,98 @@ With BLoC, every page in the app will have three components:
 - the *BLoC layer*, which we also refer to as the *Provider* or *service*, contains the actual business logic and communicates with the database (in this workshop, the `DataProvider`)
 - the *data layer* or the data *model* contains simple data classes which represent the data that is to be displayed in the UI, and is provided by the BLoC (in this workshop, we don't need a custom class because we simply use a `Map<String, double>` as our model)
 ---
+
+### Testing
+
+Now we have the functionality we wanted, but we've only tested it manually. Let's add some automated testing in the `test/widget_test.dart` file.
+
+The simplest thing to test is the existence of the legend labels for the pie chart:
+
+```dart
+testWidgets('Test names', (WidgetTester tester) async {
+  await tester.pumpWidget(ChangeNotifierProvider(
+      create: (context) => DataProvider(), child: MyApp()));
+
+  expect(find.text('Flutter'), findsOneWidget);
+  expect(find.text('React'), findsOneWidget);
+  expect(find.text('Xamarin'), findsOneWidget);
+  expect(find.text('Ionic'), findsOneWidget);
+});
+```
+
+Note that, when pumping the app, you need to pump it with the appropriate `Provider`. Another thing we can test easily is navigation:
+
+```dart
+testWidgets('Test navigation', (WidgetTester tester) async {
+  await tester.pumpWidget(ChangeNotifierProvider(
+      create: (context) => DataProvider(), child: MyApp()));
+
+  expect(find.byType(MainPage), findsOneWidget);
+  expect(find.byType(EditPage), findsNothing);
+
+  await tester.tap(find.byIcon(Icons.edit));
+  await tester.pumpAndSettle();
+
+  expect(find.byType(MainPage), findsNothing);
+  expect(find.byType(EditPage), findsOneWidget);
+
+  await tester.tap(find.text('Save'));
+  await tester.pumpAndSettle();
+
+  expect(find.byType(MainPage), findsOneWidget);
+  expect(find.byType(EditPage), findsNothing);
+});
+```
+
+Remember that, after actions like tapping certain buttons, you need to wait for the animations to finish by calling `await tester.pumpAndSettle()`.
+
+Now, right-click `widget_test.dart` and select *Run > tests in widget_test...* to make sure the tests work. If you don't see that option, you may need to *Edit configurations* and add a Flutter Test configuration for the `test/` folder.
+
+To test that the most important feature - editing the chart data - actually works, we first need to initialise the `DataProvider` and test the initial values:
+
+```dart
+DataProvider provider = DataProvider();
+Map<String, double> dataMap = provider.dataMap;
+
+expect(dataMap['Flutter'], equals(5));
+expect(dataMap['React'], equals(3));
+expect(dataMap['Xamarin'], equals(2));
+expect(dataMap['Ionic'], equals(2));
+```
+
+Then , we pump the app, open the edit page, change the value in one of the fields and press 'Save':
+
+```dart
+await tester.pumpWidget(
+    ChangeNotifierProvider(create: (context) => provider, child: MyApp()));
+
+await tester.tap(find.byIcon(Icons.edit));
+await tester.pumpAndSettle();
+
+Finder flutterValueField = find.widgetWithText(TextFormField, '5.0');
+await tester.enterText(flutterValueField, '10');
+
+await tester.tap(find.text('Save'));
+await tester.pumpAndSettle();
+```
+
+Finally, we test the new values:
+
+```dart
+expect(dataMap['Flutter'], equals(10));
+expect(dataMap['React'], equals(3));
+expect(dataMap['Xamarin'], equals(2));
+expect(dataMap['Ionic'], equals(2));
+```
+
+Run this last test as well to make sure everything works as expected.
+
+---
+
+**GitHub Actions**
+
+**ACS UPB Mobile** uses GitHub Actions for continuous integration & continuous deployment. What this means is, with every push to the repository, the tests are run in a virtual machine and the last commit pushed will be marked with a checkmark if the tests pass and an x if at least one test fails. If a new tag is added and the tests pass, the new version is automatically deployed onto the website and as an apk on GitHub.
+
+Ideally, every new feature should have its own tests or at least be added to the [integration test](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/test/integration_test.dart), which runs on multiple screen sizes and navigates to all pages in the app to make sure there are no obvious errors like overflows.
+
+---

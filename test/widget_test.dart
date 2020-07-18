@@ -7,24 +7,70 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:flutterworkshop/data_provider.dart';
+import 'package:flutterworkshop/edit_page.dart';
 import 'package:flutterworkshop/main.dart';
+import 'package:flutterworkshop/main_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('Test names', (WidgetTester tester) async {
+    await tester.pumpWidget(ChangeNotifierProvider(
+        create: (context) => DataProvider(), child: MyApp()));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Flutter'), findsOneWidget);
+    expect(find.text('React'), findsOneWidget);
+    expect(find.text('Xamarin'), findsOneWidget);
+    expect(find.text('Ionic'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Test navigation', (WidgetTester tester) async {
+    await tester.pumpWidget(ChangeNotifierProvider(
+        create: (context) => DataProvider(), child: MyApp()));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byType(MainPage), findsOneWidget);
+    expect(find.byType(EditPage), findsNothing);
+
+    await tester.tap(find.byIcon(Icons.edit));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MainPage), findsNothing);
+    expect(find.byType(EditPage), findsOneWidget);
+
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MainPage), findsOneWidget);
+    expect(find.byType(EditPage), findsNothing);
+  });
+
+  testWidgets('Test editing', (WidgetTester tester) async {
+    DataProvider provider = DataProvider();
+    Map<String, double> dataMap = provider.dataMap;
+
+    // Test initial values
+    expect(dataMap['Flutter'], equals(5));
+    expect(dataMap['React'], equals(3));
+    expect(dataMap['Xamarin'], equals(2));
+    expect(dataMap['Ionic'], equals(2));
+
+    // Edit data
+    await tester.pumpWidget(
+        ChangeNotifierProvider(create: (context) => provider, child: MyApp()));
+
+    await tester.tap(find.byIcon(Icons.edit));
+    await tester.pumpAndSettle();
+
+    Finder flutterValueField = find.widgetWithText(TextFormField, '5.0');
+    await tester.enterText(flutterValueField, '10');
+
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    // Test new values
+    expect(dataMap['Flutter'], equals(10));
+    expect(dataMap['React'], equals(3));
+    expect(dataMap['Xamarin'], equals(2));
+    expect(dataMap['Ionic'], equals(2));
   });
 }
