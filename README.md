@@ -2,6 +2,28 @@
 
 This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it.
 
+**Table of contents**
+* [Getting started with Flutter](#getting-started-with-flutter)
+  + [What **is** Flutter?](#what---is---flutter-)
+  + [Create a new Flutter application](#create-a-new-flutter-application)
+  + [Change it up](#change-it-up)
+  + [Create the layout](#create-the-layout)
+    - [AppBar](#appbar)
+    - [Card](#card)
+  + [Add the content](#add-the-content)
+    - [Import a package](#import-a-package)
+    - [Use the package](#use-the-package)
+    - [Check orientation](#check-orientation)
+  + [Make it interactive](#make-it-interactive)
+    - [Start with the header](#start-with-the-header)
+    - [Build the data rows](#build-the-data-rows)
+    - [Update the datamap](#update-the-datamap)
+  + [Add another page](#add-another-page)
+    - [New home page](#new-home-page)
+    - [Navigating between pages](#navigating-between-pages)
+    - [Passing data](#passing-data)
+  + [Test it](#test-it)
+
 ## Getting started with Flutter
 
 ### What **is** Flutter?
@@ -29,6 +51,8 @@ You can make the emulator window display on top of the IDE by going to Extended 
 <img src=screenshots/android_studio.png>
 
 ---
+
+Subsequent sections will link to a tag in this repository which has the code you should end up with at the end of that section. You can use them to skip a section or cross-check your code if you have a problem. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/new_app).
 
 ### Change it up
 
@@ -171,7 +195,7 @@ If we look at the app, the layout is now similar to the grading view's backgroun
 
 It should've automatically set the `padding` property to `EdgeInsets.all(8.0)`. This means that we want a padding of 8 pixels on each side of the wrapped widget. We can use `EdgeInsets` to define exactly what kind of padding we want, for example `EdgeInsets.only(left: 8.0, right: 4.0)` to specify a value for each side and omit sides we don't need a padding on, `EdgeInsets.symmetric(vertical: 2.0)` if we want the same padding on corresponding sides, or `EdgeInsets.fromLTRB(1.0, 2.0, 3.0, 4.0)` to specify the padding for each side without needing named parameters (the order is left-top-right-bottom, LTRB).
 
-You should now have an app that looks like this:
+The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/basic_layout). You should now have an app that looks like this:
 
 <img src=screenshots/layout.png height=500>
 
@@ -290,7 +314,7 @@ Similar to wrapping widgets, we can also remove them easily from the tree using 
 
 ---
 
-The app should now look like this:
+The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/content). The app should now look like this:
 
 <img src=screenshots/content.png height=500>
 
@@ -463,7 +487,7 @@ onChanged: (newString) {
 }
 ```
 
-We can now change the value of the items in the data map and watch the pie chart update as we do that. The app should now look like this and be interactive:
+We can now change the value of the items in the data map and watch the pie chart update as we do that. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/interactive). The app should now look like this and be interactive:
 
 <img src=screenshots/interactive.png height=500>
 
@@ -619,7 +643,7 @@ class _EditPageState extends State<EditPage> {
 }
 ```
 
-The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
 
 <img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
 
@@ -638,7 +662,7 @@ With BLoC, every page in the app will have three components:
 - the *data layer* or the data *model* contains simple data classes which represent the data that is to be displayed in the UI, and is provided by the BLoC (in this workshop, we don't need a custom class because we simply use a `Map<String, double>` as our model)
 ---
 
-### Testing
+### Test it
 
 Now we have the functionality we wanted, but we've only tested it manually. Let's add some automated testing in the `test/widget_test.dart` file.
 
@@ -721,7 +745,7 @@ expect(dataMap['Xamarin'], equals(2));
 expect(dataMap['Ionic'], equals(2));
 ```
 
-Run this last test as well to make sure everything works as expected.
+Run this last test as well to make sure everything works as expected. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/testing).
 
 ---
 
@@ -729,6 +753,6 @@ Run this last test as well to make sure everything works as expected.
 
 **ACS UPB Mobile** uses GitHub Actions for continuous integration & continuous deployment. What this means is, with every push to the repository, the tests are run in a virtual machine and the last commit pushed will be marked with a checkmark if the tests pass and an x if at least one test fails. If a new tag is added and the tests pass, the new version is automatically deployed onto the website and as an apk on GitHub.
 
-Ideally, every new feature should have its own tests or at least be added to the [integration test](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/test/integration_test.dart), which runs on multiple screen sizes and navigates to all pages in the app to make sure there are no obvious errors like overflows.
+Ideally, every new feature should have its own tests or at least be added to the [integration test](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/test/integration_test.dart), which runs on both orientations and multiple screen sizes and navigates to all pages in the app to make sure there are no obvious errors like overflows.
 
 ---
