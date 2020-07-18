@@ -51,13 +51,13 @@ A Flutter app is essentially a *widget tree*. Most widgets don't need to be leav
 
 The most important method in a Widget is the `build` method, which describes the part of the UI represented by that widget. This method takes a `BuildContext` parameter, which has information about the location in the tree where the widget builds.
 
-#### Create the layout
+### Create the layout
 
 We will now attempt to create a layout similar to the grading view in **ACS UPB Mobile**:
 
 <img src=screenshots/grading_view.png height=500>
 
-##### AppBar
+#### AppBar
 
 The coloured strip at the top is called an `AppBar`. Let's give our `Scaffold` an `AppBar` with a meaningful `title`.
 
@@ -78,7 +78,7 @@ Note the comma at the end, where the `title` attribute is defined - since Flutte
 
 Keep in mind that **ACS UPB Mobile** uses a [custom scaffold](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/widgets/scaffold.dart) for consistency throughout pages in the app, meaning you will never need to define the `AppBar` yourself. Whenever you need to create a new page, you will start with an `AppScaffold` instead of a standard `Scaffold`.
 
-##### Card
+#### Card
 
 The styled, elevated container that holds the pie chart in the screenshot above is called a `Card`. Let's try to create an empty card which takes up a third of the available space.
 
@@ -175,11 +175,11 @@ You should now have an app that looks like this:
 
 <img src=screenshots/layout.png height=500>
 
-#### Add the content
+### Add the content
 
 We're ready to add the actual content!
 
-##### Import a package
+#### Import a package
 
 Even though Flutter is a fairly new technology, the community is very active, and because it is open source there are countless available resources online that you can use. A good rule of thumb is, *don't try to reinvent the wheel*. Before starting to work on something, check if someone has done it before. You might find a useful package that you can add to the app, or maybe even a sample app that you can copy and modify for your needs.
 
@@ -193,7 +193,7 @@ One such example is, in our case, displaying some data in the form of a pie char
 
 Back to our app - all we need to do to use this package is to add it to our `pubspec.yaml` file under `dependencies`:
 
-```
+```yaml
 dependencies:
   pie_chart: <latest version>
 ```
@@ -202,7 +202,7 @@ You can see the latest version in the package's name. Specifying it is not manda
 
 Android Studio will prompt you to run `flutter pub get` to update the dependencies of your project. Do so.
 
-##### Use the package
+#### Use the package
 
 Read the documentation of `pie_chart` and use the simple example to place a pie chart in our `Card`.
 
@@ -244,7 +244,7 @@ Read the documentation of `pie_chart` and use the simple example to place a pie 
 
 Normally, we shouldn't do complex operations like populating a dataset in the build method, because *it is called every time the page is reloaded or something changes*. This is particularly important for stateful widgets, which are rebuilt often.
 
-##### Check orientation
+#### Check orientation
 
 Hot Reload and look at the app. Now we have the pie chart and it looks alright! However, check what happens if you rotate the device. You will most likely see an overflow. Can you tell why it happens?
 
@@ -293,3 +293,176 @@ Similar to wrapping widgets, we can also remove them easily from the tree using 
 The app should now look like this:
 
 <img src=screenshots/content.png height=500>
+
+### Make it interactive
+
+We want the user to be able to change the values of the items in the datamap, so we'll make an editable table containing two columns: *Name* (not editable) and *Value* (editable).
+
+#### Start with the header
+
+Let's add a header just under the card, with the *Name* label taking up 3/4 of the horizontal space, and the *Value* label the other 1/4 (*hint*: the wigets you need are `Row`, `Expanded` and `Text`). We should give it a padding as well - the standard 8 pixels on each side looks good.
+
+The `Text` widget takes a `style` argument, which allows us to control the colour, size, font and weight of the text. You could manually set these properties, but for consistency in an app, it is generally recommended to use pre-defined styles from the app's theme. You can define these globally in the same place where you defined the primary and secondary colours earlier. For our header, we could use the `headline6` text style, which you can obtain by calling `Theme.of(context).textTheme.headline6`, similar to how you used `MediaQuery` to get the screen size before. This is particularly important with apps with a customizable theme, like **ACS UPB Mobile** which has a dark mode and a light mode.
+
+It should now look like this:
+
+<img src=screenshots/header.png><br>
+
+<details>
+  <summary>Spoiler - solution</summary>
+
+  ```dart
+  ListView(
+    children: [
+      Card(child: PieChart(dataMap: dataMap)),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                "Name",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                "Value",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  )
+  ```
+
+</details><br>
+
+Keep in mind that, since **ACS UPB Mobile** is localized (works in both English and Romanian), you will never have to type string literals in the code itself, since everything needs to be defined in both languages in the localization files. The [Flutter Intl](https://plugins.jetbrains.com/plugin/13666-flutter-intl) Android Studio plugin generates localization code automatically, so make sure you have it installed. Say we need to define the strings for "Name" and "Value" - we would need to define them in [intl_en.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_en.arb) and [intl_ro.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_ro.arb) (the plugin fires automatically when we save an .arb file), and then use them in the code as `S.of(context).name` and `S.of(context).value`.
+
+#### Build the data rows
+
+Now, we need to add a row for each entry in the datamap. To keep things clean, create a method (`List<Widget> buildTextFields(Map<String, double> dataMap, BuildContext context)`) that generates a row with two `TextFormField` widgets for each (key, value) pair in the map. We only want to modify the values, so make the field that corresponds to the key (the name) `readOnly`. The value field should only accept numerical values (*hint*: check the `keyboardType` attribute).
+
+For a nicer look, you can add some padding to these rows and some spacing between the columns (don't forget the header). Padding between list items can be added using a `SizedBox` instead of a `Padding` widget, if you want to avoid unnecessary nesting.
+
+<details>
+  <summary>Spoiler - possible solution</summary>
+
+  ```dart
+  List<Widget> buildTextFields(
+      Map<String, double> dataMap, BuildContext context) {
+    return dataMap
+        .map(
+          (key, value) => MapEntry(
+              key,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: TextFormField(
+                        initialValue: key,
+                        readOnly: true,
+                      ),
+                    ),
+                    SizedBox(width: 16.0),
+                    Expanded(
+                      child: TextFormField(
+                        initialValue: value.toString(),
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        )
+        .values
+        .toList();
+  }
+  ```
+
+</details><br>
+
+Concatenate the result to the end of the `ListView`'s children (`ListView(children: [...] + buildTextFields(dataMap, context))`) and you should now have a table that looks like this:
+
+<img src=screenshots/table.png>
+
+#### Update the datamap
+
+You can now modify the values in the second column, but the datamap doesn't get updated. To update it, we should define the `TextFormField`'s `onChanged` callback. Add a `print` statement to make sure it gets called correctly.
+
+```dart
+TextFormField(
+  initialValue: value.toString(),
+  keyboardType:
+      TextInputType.numberWithOptions(decimal: true),
+  onChanged: (newString) {
+    double newValue = double.tryParse(newString) ?? 0.0;
+    dataMap[key] = newValue;
+    print(key + ': ' + newValue.toString());
+  },
+)
+```
+Now, if we look at the console we can see it does get called when a value is changed, but the pie chart remains unchanged. Can you guess why that is?
+
+<details>
+  <summary>Spoiler - answer</summary>
+
+  Our widget is stateless. It is built once and never gets updated, meaning that if the datamap changes afterwards, the widget won't be rebuilt. We need a stateful widget for this.
+
+</details><br>
+
+---
+
+**IntelliSense tip #4: stateless to stateful**
+
+Android Studio to the rescue again! It's easy to convert a stateless widget into a stateful one - just *Alt*+*Enter* on the name of the widget!
+
+<img src=screenshots/convert.png>
+
+---
+
+Alongside the `build` method, which is called every time the widget is updated, stateful widgets have an `initState` method that is called on the first build. Let's make the `dataMap` a class attribute and initialize it in `initState`:
+
+```dart
+class _MainPageState extends State<MainPage> {
+  Map<String, double> dataMap;
+
+  @override
+  void initState() {
+    super.initState();
+
+    dataMap = new Map();
+    dataMap.putIfAbsent("Flutter", () => 5);
+    dataMap.putIfAbsent("React", () => 3);
+    dataMap.putIfAbsent("Xamarin", () => 2);
+    dataMap.putIfAbsent("Ionic", () => 2);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ...
+  }
+```
+
+When we change the state (in our case, by updating the data map), we need to notify the framework to process the change. We do this by making the change in a function that is passed to `setState`. The last thing we need to do for our pie chart to be interactive is to make a slight modification to the `onChanged` callback of our text fields:
+
+```dart
+onChanged: (newString) {
+  double newValue = double.tryParse(newString) ?? 0.0;
+  setState(() {
+    dataMap[key] = newValue;
+  });
+  print(key + ': ' + newValue.toString());
+}
+```
+
+We can now change the value of the items in the data map and watch the pie chart update as we do that. The app should now look like this and be interactive:
+
+<img src=screenshots/interactive.png height=500>
