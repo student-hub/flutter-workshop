@@ -466,3 +466,174 @@ onChanged: (newString) {
 We can now change the value of the items in the data map and watch the pie chart update as we do that. The app should now look like this and be interactive:
 
 <img src=screenshots/interactive.png height=500>
+
+### Add another page
+
+Now, what do we do if we want to have another page? And more importantly, what do we do if we want to share data between those pages?
+
+Say we want our home page to contain just the chart, centered and with the legend placed at the top. On the right side of the scaffold, we'd have an edit button that takes us to the page we've already build.
+
+#### New home page
+
+Let's rename our stateful widget to `EditPage` and create a new `MainPage` widget with the characteristics above. Leave out the edit button for now. You can put each of them in their own file to avoid having a very large `main.dart` file. You can also change the title on the app bar for each of them accordingly ('View chart'/'Edit chart').
+
+<details>
+  <summary>Spoiler - solution</summary>
+
+  ```dart
+  class MainPage extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      Map<String, double> dataMap = new Map();
+      dataMap.putIfAbsent("Flutter", () => 5);
+      dataMap.putIfAbsent("React", () => 3);
+      dataMap.putIfAbsent("Xamarin", () => 2);
+      dataMap.putIfAbsent("Ionic", () => 2);
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('View chart'),
+        ),
+        body: PieChart(
+          dataMap: dataMap,
+          legendPosition: LegendPosition.top,
+        ),
+      );
+    }
+  }
+  ```
+
+</details>
+
+#### Navigating between pages
+
+Now, we need to add the edit button to the scaffold's app bar. This is done by adding an `IconButton` as an `action` to the `AppBar`. The `onPressed` callback on this button uses `Navigator` to open an `EditPage`.
+
+```dart
+AppBar(
+  title: Text('View chart'),
+  actions: [
+    IconButton(
+      icon: Icon(Icons.edit),
+      onPressed: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => EditPage())),
+    )
+  ],
+)
+```
+
+The pages in an app act like a stack - if we `push` a new page, the user can navigate back to the previous page in the stack by pressing the back button (equivalent to `pop`ping the stack). We have full control of the stack with various `Navigator` methods - for instance, if we want to replace the current page, we can use `pushReplacement`.
+
+Alternatively, a cleaner way to deal with navigation is through *named routes*. Replace `home: MainPage()` in the `MaterialApp` with:
+
+```dart
+routes: {
+  '/': (context) => MainPage(),
+  '/edit': (context) => EditPage(),
+}
+```
+
+The default route when the app opens is '/', but you can specify a different one using `initialRoute`, should you need to. You can now open the edit page by simply calling:
+```dart
+Navigator.of(context).pushNamed('/edit')
+```
+
+An interesting effect of using named routes is that they are accessible through the URL in the web version. Try running the app on the web, by selecting "Chrome (web)" from the device dropdown. You will notice that, if the URL is, for instance, 'http://localhost:52755/#/', you can access 'http://localhost:52755/#/edit' to get to the edit page.
+
+#### Passing data
+
+Right now, each page uses a separate data map. If we used `MaterialPageRoute` and built the `EditPage` instance in the `MainPage` to navigate, we could technically pass the data map as a parameter to `EditPage`'s constructor. However, changes made on the edit page would still not be visible on the main page, since we couldn't notify the main page of the changes. There are multiple ways to handle this, but **ACS UPB Mobile** uses the [provider](https://pub.dev/packages/provider) package.
+
+`Provider` is a dependency injection framework which can be used to manage state in a Flutter application. `Provider`s offer an easy way to encapsulate state and share it with a branch of the widget tree. It achieves that by being defined as the parent of that branch.
+
+Install the [provider](https://pub.dev/packages/provider) package and create a new source file called `data_provider.dart` in the `lib/` folder. Define the `DataProvider` class here, like this:
+
+```dart
+class DataProvider with ChangeNotifier {
+  Map<String, double> _dataMap;
+
+  DataProvider() {
+    _dataMap = new Map();
+    _dataMap.putIfAbsent("Flutter", () => 5);
+    _dataMap.putIfAbsent("React", () => 3);
+    _dataMap.putIfAbsent("Xamarin", () => 2);
+    _dataMap.putIfAbsent("Ionic", () => 2);
+  }
+
+  Map<String, double> get dataMap => _dataMap;
+
+  set dataMap(Map<String, double> newDataMap) {
+    _dataMap = newDataMap;
+    notifyListeners();
+  }
+}
+```
+
+It initialized the data map that we know in the constructor, and has a custom getter and setter - with the setter calling `notifyListeners()` to notify any widget that is using this `Provider` about the change. Now add it to the root of the application:
+
+```dart
+void main() {
+  runApp(ChangeNotifierProvider(
+      create: (context) => DataProvider(), child: MyApp()));
+}
+```
+
+There are different types of `Provider`s, but `ChangeNotifierProvider` is the right one for our needs. Now, to fetch this data map from the provider in both of our pages, we simply need to call:
+
+```dart
+Provider.of<DataProvider>(context).dataMap;
+```
+
+The `<DataProvider>` type specification is optional because we only have one `Provider` as the parent, but becomes necessary when there are multiple `Provider`s in the tree. Finally, we should add a 'Save' button to the edit page which registers the changes with our `DataProvider`:
+
+```dart
+class _EditPageState extends State<EditPage> {
+  Map<String, double> dataMap;
+
+  @override
+  void initState() {
+    super.initState();
+    dataMap = Provider.of<DataProvider>(context, listen: false).dataMap;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit chart'),
+        actions: [
+          FlatButton(
+            child: Text('Save'),
+            onPressed: () {
+              Provider.of<DataProvider>(context, listen: false).dataMap =
+                  dataMap;
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+      body: ...
+  }
+
+  ...
+}
+```
+
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
+
+<img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
+
+---
+
+**BLoC**
+
+**ACS UPB Mobile** uses a variation of the **BLoC** (Business Logic Component) design pattern used in Flutter development. This variant utilizes `Provider`s to avoid boilerplate code.
+
+With BLoC, every page in the app will have three components:
+
+<img src=screenshots/bloc.png height=100><br>
+
+- the *UI/Flutter layer*, also called the *view*, which acts as a middleman between the user and the BLoC layer (in this workshop, the `MainPage` and `EditPage`)
+- the *BLoC layer*, which we also refer to as the *Provider* or *service*, contains the actual business logic and communicates with the database (in this workshop, the `DataProvider`)
+- the *data layer* or the data *model* contains simple data classes which represent the data that is to be displayed in the UI, and is provided by the BLoC (in this workshop, we don't need a custom class because we simply use a `Map<String, double>` as our model)
+---
