@@ -23,6 +23,8 @@ This workshop is meant to help you get started with Flutter and contributing to 
     - [Navigating between pages](#navigating-between-pages)
     - [Passing data](#passing-data)
   + [Test it](#test-it)
+* [Getting started with Firebase](#getting-started-with-firebase)
+* [Start contributing](#start-contributing)
 
 ## Getting started with Flutter
 
@@ -756,3 +758,22 @@ Run this last test as well to make sure everything works as expected. The code t
 Ideally, every new feature should have its own tests or at least be added to the [integration test](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/test/integration_test.dart), which runs on both orientations and multiple screen sizes and navigates to all pages in the app to make sure there are no obvious errors like overflows.
 
 ---
+
+## Getting started with Firebase
+
+TODO
+
+## Start contributing
+
+In order to start contributing, simply follow these 10 steps:
+
+1. Please make sure you've read the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
+2. Fork the [ACS UPB Mobile](https://github.com/acs-upb-mobile/acs-upb-mobile) repository.
+3. Clone the fork onto your system and open it as an Android Studio project.
+4. Don't forget to run `flutter pub get` to update the dependencies.
+5. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
+6. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
+7. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request).
+8. Wait for the PR to be approved.
+9. ???
+10. Profit!
