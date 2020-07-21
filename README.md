@@ -29,6 +29,11 @@ This workshop is meant to help you get started with Flutter and contributing to 
     - [Fix the tests](#fix-the-tests)
   + [Add improvements](#add-improvements)
 * [Get started with Firebase](#get-started-with-firebase)
+  + [Add Firebase to your app(s)](#add-firebase-to-your-app-s-)
+    - [Enable the FlutterFire plugins](#enable-the-flutterfire-plugins)
+    - [Add Firebase to Android](#add-firebase-to-android)
+    - [Add Firebase to iOS](#add-firebase-to-ios)
+    - [Add Firebase to Web and host the app](#add-firebase-to-web-and-host-the-app)
 * [Start contributing](#start-contributing)
 
 ## Get started with Flutter
@@ -883,7 +888,51 @@ Be creative, and remember to update the tests accordingly!
 
 ## Get started with Firebase
 
-TODO
+**ACS UPB Mobile** uses [Firebase](https://firebase.google.com/) services for analytics ([Google Analytics](https://firebase.google.com/docs/analytics)), authentication ([Firebase Auth](https://firebase.google.com/products/auth)) and storage ([Firestore](https://firebase.google.com/products/firestore), [Cloud Storage](https://firebase.google.com/docs/storage)). In order to get familiar with it, this section will guide you through the process of adding and using Firebase in your app. If you skipped the previous section, you can start with the code [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/testing).
+
+### Add Firebase to your app(s)
+
+Go to the [Firebase console](https://console.firebase.google.com/) and *Create a project*. Give it a name (like "Flutter workshop") and enable Google Analytics (you may need to create a Google Analytics account - you can call it "Personal projects" and reuse it whenever you'd like to play around with Firebase). When creation is complete, you will need to add it to your Flutter app on each individual platform (Android, iOS and Web).
+
+#### Enable the FlutterFire plugins
+
+The easiest way to access Firebase services in Flutter is by making use of [`flutterfire`](https://github.com/FirebaseExtended/flutterfire) plugins, which provide an easy-to-use API for Flutter applications. **ACS UPB Mobile** currently uses [`firebase_analytics`](https://pub.dartlang.org/packages/firebase_analytics), [`firebase_auth`](https://pub.dartlang.org/packages/firebase_auth), [`cloud_firestore`](https://pub.dartlang.org/packages/cloud_firestore) and [`firebase_storage`](https://pub.dartlang.org/packages/firebase_storage), all of which depend on [`firebase_core`](https://pub.dev/packages/firebase_core). These packages offer many useful features for all three target platforms (Android, iOS, Web), except `cloud_firestore`, which (as of July 2020) still [lacks Web support](https://github.com/flutter/flutter/issues/45294).
+
+Add the most recent versions of `firebase_core`, `firebase_analytics` and `cloud_firestore` to the project's `pubspec.yaml` file. Remember to run `flutter pub get`.
+
+#### Add Firebase to Android
+
+- Click the Android icon in the Firebase console  to launch the setup workflow. You can find the Android package name in your Flutter project's `android/app/build.gradle` file if you search for the `applicationId` field.
+- Download `google-services.json` and save it in the `android/app/` folder.
+- Follow the instructions to enable Firebase for the Android app.
+- Update `minSdkVersion` in the app-level `build.gradle` file to `21`.
+- You may need to run `flutter clean` and re-build the application for the verification step.
+- In the Android Studio console, run `flutter packages get`.
+
+*Note*: If you get an error saying "Plugin project :firebase_auth_web not found. Please update settings.gradle.", try the fix [here](https://github.com/FirebaseExtended/flutterfire/issues/2599).
+
+#### Add Firebase to iOS
+
+Skip this step if you do not have a MacOS computer.
+
+- Click "Add app" in the Firebase console and select "iOS" to launch the setup workflow. The bundle ID should be the same as the `applicationId` you used earlier for the Android setup, or you can find it in `ios/Runner.xcodeproj/project.pbxproj` if you search for `PRODUCT_BUNDLE_IDENTIFIER`.
+- Download `GoogleService-Info.plist` and save it in the `ios/Runner` folder.
+- Follow the instructions to enable Firebase for the Android app. You may need to run `flutter clean` and re-build the application for the verification step.
+- In the Android Studio console, run `flutter packages get`.
+
+#### Add Firebase to Web and host the app
+
+- Click "Add app" in the Firebase console and select "Web" to launch the setup workflow.
+- Enable hosting. You can keep the default domain name.
+- Follow the instructions and add the scripts to `web/index.html` in your project **before the "main.dart.js" script**.
+- Run `flutter build web` before following the hosting instructions. Make sure you select `build/web` as the public directory when running `firebase init`:
+<img src=screenshots/firebase_init.png>
+- You can now access the link and the app should be up and running on the internet! However, if you try to run it locally from Android Studio, you will get an error. Some additional setup is needed to fix that:
+  + From the Firebase console, open the settings for the web application.
+  + Under *Firebase SDK snippet*, select *CDN*. Replace the scripts you added earlier with this version.
+- We will use Firestore as our database for the app. To add the dependency, simply duplicate the `".../firebase-analytics.js"` script line (*Ctrl*+*D* in Android Studio) from `index.html` and change `analytics` to `firestore`.
+
+Your code should now look like [this](https://github.com/acs-upb-mobile/flutter-workshop/tree/firebase), but keep in mind you should use your own configuration. The Firebase console offers all sorts of useful information about your app(s), including usage statistics.
 
 ## Start contributing
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>344702447050-n4blu8f5r17bboju7qqjouef7b8b98o0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.344702447050-n4blu8f5r17bboju7qqjouef7b8b98o0</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC5epsxzXiaV7w_j1YLzSPw07cuTujO2w8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>344702447050</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.flutterworkshop</string>
+	<key>PROJECT_ID</key>
+	<string>flutter-workshop-4b99c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flutter-workshop-4b99c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:344702447050:ios:6f6be522d3164e7c423333</string>
+	<key>DATABASE_URL</key>
+	<string>https://flutter-workshop-4b99c.firebaseio.com</string>
+</dict>
+</plist>
