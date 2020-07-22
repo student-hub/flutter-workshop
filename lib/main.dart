@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutterworkshop/data_provider.dart';
 import 'package:flutterworkshop/edit_page.dart';
 import 'package:flutterworkshop/main_page.dart';
+import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PrefService.init();
+
+  PrefService.setDefaultValues({
+    'data_map_keys': ['Flutter', 'React', 'Xamarin', 'Ionic'],
+    'data_map_values': ['5', '3', '2', '2'],
+  });
+
   runApp(ChangeNotifierProvider(
       create: (context) => DataProvider(), child: MyApp()));
 }

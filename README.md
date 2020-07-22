@@ -3,7 +3,7 @@
 This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it.
 
 **Table of contents**
-* [Getting started with Flutter](#getting-started-with-flutter)
+* [Get started with Flutter](#get-started-with-flutter)
   + [What **is** Flutter?](#what---is---flutter-)
   + [Create a new Flutter application](#create-a-new-flutter-application)
   + [Change it up](#change-it-up)
@@ -23,10 +23,14 @@ This workshop is meant to help you get started with Flutter and contributing to 
     - [Navigating between pages](#navigating-between-pages)
     - [Passing data](#passing-data)
   + [Test it](#test-it)
-* [Getting started with Firebase](#getting-started-with-firebase)
+  + [Make data persistent](#make-data-persistent)
+    - [Enable the plugin](#enable-the-plugin)
+    - [Handle the data](#handle-the-data)
+    - [Fix the tests](#fix-the-tests)
+* [Get started with Firebase](#get-started-with-firebase)
 * [Start contributing](#start-contributing)
 
-## Getting started with Flutter
+## Get started with Flutter
 
 ### What **is** Flutter?
 
@@ -759,7 +763,110 @@ Ideally, every new feature should have its own tests or at least be added to the
 
 ---
 
-## Getting started with Firebase
+### Make data persistent
+
+Our app is now interactive and we can modify the chart data as we please. However, these modifications are not persistent - they are lost if we restart the app. The go-to way to persist data is by using a database (e.g. [SQLite](https://flutter.dev/docs/cookbook/persistence/sqlite), [Hive](https://medium.com/@alexawaikin/hive-for-flutter-fast-local-storage-database-made-with-dart-167ad63e2d1) or [Firebase](https://flutter.dev/docs/development/data-and-backend/firebase), see section [Get started with Firebase](#get-started-with-firebase)), but for very simple data such as ours, we can store key-value data on the disk using the [`shared_preferences`](https://pub.dev/packages/shared_preferences) plugin. It works by wrapping platform-specific persistent storage for simple data (`NSUserDefaults` on iOS and macOS, `SharedPreferences` on Android, etc.).
+
+#### Enable the plugin
+
+**ACS UPB Mobile** uses the [`preferences`](https://pub.dev/packages/preferences) plugin (which in turn depends on `shared_preferences`) to store simple data such as settings. Let's use this in our app as well, add the dependency to the `pubspec.yaml` file.
+
+As per the package documentation, you need to call `PrefService.init()` before running the app. Change the main method to:
+```dart
+import 'package:preferences/preferences.dart';
+
+void main() async {
+  await PrefService.init();
+
+  runApp(ChangeNotifierProvider(
+      create: (context) => DataProvider(), child: MyApp()));
+}
+```
+Because the `PrefService.init()` call is asynchronous, we need to use the `await` keyword to make sure it completes before the `runApp` call. The `await` keyword can only be used in asynchronous functions, hence why we need to mark `main` as `async`. If we don't use `await`, the `runApp` call would be made while the `PrefService.init()` method is still running.
+
+---
+
+**Asynchronous programming in Dart**
+
+Dart makes asynchronous programming easier with `async`/`await` and `Future`s. Asynchronous operations let your program complete work while waiting for another operation to finish. This is particularly important when handling UI - the interface operations need to be handled on the main thread for the app to run smoothly, while more complex operations such as network calls and reading from files should be handled in a background thread.
+
+***Key terms:***
+- **synchronous operation**: A synchronous operation blocks other operations from executing until it completes.
+- **asynchronous operation**: Once initiated, an asynchronous operation allows other operations to execute before it completes.
+- **`async`**: You can use the `async` keyword before a function’s body to mark it as asynchronous.
+- **`await`**: You can use the `await` keyword to get the completed result of an asynchronous expression. The await keyword only works within an async function.
+-**future**: A future is an instance of the `Future` class. A future represents the result of an asynchronous operation, and can have two states: *uncompleted* or *completed*.
+
+To understand asynchronous programming in Dart, consider completing [this 50-minute codelab](https://dart.dev/codelabs/async-await).
+
+---
+
+#### Handle the data
+
+The `shared_preferences` plugin only allows for the following data types to be stored under a key: `bool`, `double`, `int`, `String`, `List<String>`. Because we'd like to store a `Map<String, double>`, we could store it as two string lists. Note that **you should never do this with more complex data**, as it adds the overhead of converting between collections, when the whole point of `Map`s in general is to be very fast.
+
+To set the default values we've been using so far, add the following in your `main` function, after the initialization:
+
+```dart
+PrefService.setDefaultValues({
+    'data_map_keys': ['Flutter', 'React', 'Xamarin', 'Ionic'],
+    'data_map_values': ['5', '3', '2', '2'],
+  });
+```
+
+If you try to run the app now, you will get an error. As is often the case with Flutter, the error tells you exactly what to do to fix it: you need to add `WidgetsFlutterBinding.ensureInitialized();` as the first line in your `main` function.
+
+Now we need to change our `Provider` to use the new way to save data. This being very easy to do is one of the most important benefits of providers. First, instead of initialising the map, the constructor should now read it from the preferences:
+
+```dart
+DataProvider() {
+    var keys = PrefService.get('data_map_keys');
+    var values = PrefService.get('data_map_values');
+
+    _dataMap = Map<String, double>.from(keys.asMap().map(
+        (index, key) => MapEntry(key, double.tryParse(values[index] ?? 0))));
+  }
+```
+
+Second, we need to update the custom setter:
+
+```dart
+set dataMap(Map<String, double> newDataMap) {
+    _dataMap = newDataMap;
+
+    PrefService.setStringList(
+        'data_map_keys', List<String>.from(_dataMap.keys));
+    PrefService.setStringList('data_map_values',
+        List<String>.from(_dataMap.values.map((value) => value.toString())));
+
+    notifyListeners();
+  }
+```
+
+We need the `Iterable<T>.from` calls to convert between different types of iterables (`Map`s, `List`s). If you try to run the app without these calls, you will get type errors.
+
+Run the app - it should work the same way as before, except if you close it and open it again, the changes will still be there.
+
+#### Fix the tests
+
+Every time you change something or do something new, you need to remember to run the tests before committing to the repository. If we try to run our tests now, they will fail because `PrefService` was not initialised.
+
+In Flutter testing, we can use `setUp` to define some code that needs to run before each test (or `setUpAll` for code that needs to run once before all tests). Add the following code to `widget_test.dart` to make the tests pass again:
+
+```dart
+setUp(() {
+  WidgetsFlutterBinding.ensureInitialized();
+  PrefService.enableCaching();
+  PrefService.cache = {};
+  PrefService.setStringList(
+      'data_map_keys', ['Flutter', 'React', 'Xamarin', 'Ionic']);
+  PrefService.setStringList('data_map_values', ['5', '3', '2', '2']);
+});
+```
+
+Congratulations, you now have a fully functional, interactive pie chart app with persistent data! You can find the code [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/persistence).
+
+## Get started with Firebase
 
 TODO
 
