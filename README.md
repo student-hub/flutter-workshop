@@ -27,6 +27,7 @@ This workshop is meant to help you get started with Flutter and contributing to 
     - [Enable the plugin](#enable-the-plugin)
     - [Handle the data](#handle-the-data)
     - [Fix the tests](#fix-the-tests)
+  + [Add improvements](#add-improvements)
 * [Get started with Firebase](#get-started-with-firebase)
 * [Start contributing](#start-contributing)
 
@@ -865,6 +866,20 @@ setUp(() {
 ```
 
 Congratulations, you now have a fully functional, interactive pie chart app with persistent data! You can find the code [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/persistence).
+
+### Add improvements
+
+You can keep playing around with the app to learn more about Flutter development. Here are some suggestions on what you could do:
+
+- When you press enter on one field on the edit page, change focus to the following field (*hint*: `FocusNode`).
+- Add a "Total" field on the edit page (check out the grading view screenshot in the [Create the layout]((#create-the-layout) section; the only new widget you would need to copy that layout is `Divider`).
+- Make it so you can change keys in the data map as well, not just the values.
+- Add a way for users to add new entries in the data map. There are at least two ways to do that:
+  + Add a plus button (maybe a `FloatingActionButton`) that makes a new row of text fields appear.
+  + Make a new, empty row of text fields appear if both fields in the last row have data in them.
+- Add [form validation](https://flutter.dev/docs/cookbook/forms/validation) to make sure the data in the text fields has the format you want (e.g. non-zero numbers for the values, maybe check that the names are capitalized etc.)
+
+Be creative, and remember to update the tests accordingly!
 
 ## Get started with Firebase
 
