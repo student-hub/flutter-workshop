@@ -33,36 +33,38 @@ class _EditPageState extends State<EditPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-                Card(child: PieChart(dataMap: dataMap)),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          "Name",
-                          style: Theme.of(context).textTheme.headline6,
+      body: (dataMap == null)
+          ? Center(child: Text('No data to edit'))
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView(
+                children: [
+                      Card(child: PieChart(dataMap: dataMap)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                "Name",
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ),
+                            SizedBox(width: 16.0),
+                            Expanded(
+                              child: Text(
+                                "Value",
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 16.0),
-                      Expanded(
-                        child: Text(
-                          "Value",
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ] +
-              buildTextFields(dataMap, context),
-        ),
-      ),
+                    ] +
+                    buildTextFields(dataMap, context),
+              ),
+            ),
     );
   }
 

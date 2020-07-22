@@ -1,27 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:preferences/preference_service.dart';
 
 class DataProvider with ChangeNotifier {
   Map<String, double> _dataMap;
-
-  DataProvider() {
-    var keys = PrefService.get('data_map_keys');
-    var values = PrefService.get('data_map_values');
-
-    _dataMap = Map<String, double>.from(keys.asMap().map(
-        (index, key) => MapEntry(key, double.tryParse(values[index] ?? 0))));
-  }
+  final Firestore _db = Firestore.instance;
 
   Map<String, double> get dataMap => _dataMap;
 
   set dataMap(Map<String, double> newDataMap) {
     _dataMap = newDataMap;
-
-    PrefService.setStringList(
-        'data_map_keys', List<String>.from(_dataMap.keys));
-    PrefService.setStringList('data_map_values',
-        List<String>.from(_dataMap.values.map((value) => value.toString())));
-
+    updateDataMap(newDataMap);
     notifyListeners();
+  }
+
+  Future<Map<String, double>> fetchDataMap() async {
+    DocumentSnapshot snap =
+        await _db.collection('data').document('vztH0rlKnqYCOyzK11HS').get();
+
+    _dataMap = Map<String, double>.from(snap.data['data_map']
+        .map((key, value) => MapEntry(key, value.toDouble())));
+
+    return _dataMap;
+  }
+
+  void updateDataMap(Map<String, double> newDataMap) async {
+    DocumentReference ref =
+        _db.collection('data').document('vztH0rlKnqYCOyzK11HS');
+
+    await ref.updateData({'data_map': newDataMap});
   }
 }

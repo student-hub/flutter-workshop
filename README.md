@@ -34,6 +34,11 @@ This workshop is meant to help you get started with Flutter and contributing to 
     - [Add Firebase to Android](#add-firebase-to-android)
     - [Add Firebase to iOS](#add-firebase-to-ios)
     - [Add Firebase to Web and host the app](#add-firebase-to-web-and-host-the-app)
+  + [Use Firestore in the app](#use-firestore-in-the-app)
+      - [Create the database](#create-the-database)
+      - [Update the provider](#update-the-provider)
+      - [Update the layout](#update-the-layout)
+      - [Check permissions](#check-permissions)
 * [Start contributing](#start-contributing)
 
 ## Get started with Flutter
@@ -877,7 +882,7 @@ Congratulations, you now have a fully functional, interactive pie chart app with
 You can keep playing around with the app to learn more about Flutter development. Here are some suggestions on what you could do:
 
 - When you press enter on one field on the edit page, change focus to the following field (*hint*: `FocusNode`).
-- Add a "Total" field on the edit page (check out the grading view screenshot in the [Create the layout]((#create-the-layout) section; the only new widget you would need to copy that layout is `Divider`).
+- Add a "Total" field on the edit page (check out the grading view screenshot in the [Create the layout](#create-the-layout) section; the only new widget you would need to copy that layout is `Divider`).
 - Make it so you can change keys in the data map as well, not just the values.
 - Add a way for users to add new entries in the data map. There are at least two ways to do that:
   + Add a plus button (maybe a `FloatingActionButton`) that makes a new row of text fields appear.
@@ -933,6 +938,153 @@ Skip this step if you do not have a MacOS computer.
 - We will use Firestore as our database for the app. To add the dependency, simply duplicate the `".../firebase-analytics.js"` script line (*Ctrl*+*D* in Android Studio) from `index.html` and change `analytics` to `firestore`.
 
 Your code should now look like [this](https://github.com/acs-upb-mobile/flutter-workshop/tree/firebase), but keep in mind you should use your own configuration. The Firebase console offers all sorts of useful information about your app(s), including usage statistics.
+
+### Use Firestore in the app
+
+#### Create the database
+
+Time to create our Firestore instance. Go to the Firebase console and open the *Database* view from the *Develop* category. Click *Create database*, select *Start in production mode* and choose a location for the cloud resource (the closer to the userbase, the better).
+
+---
+
+**Firestore and its data model**
+
+[Cloud Firestore](https://firebase.google.com/docs/firestore) is a noSQL database that organises
+its data in *collections* and *documents*.
+
+**Collections** are simply a list of documents, where each document has an ID within the collection.
+
+**Documents** are similar to a JSON file (or a C `struct`, if you prefer), in that they contain
+different fields which have three important components: a ***name*** - what we use to refer to the
+field, similar to a dictionary key -, a ***type*** (which can be one of `string`, `number`,
+`boolean`, `map`, `array`, `null` - yeah *null* is its own type -, `timestamp`, `geopoint`,
+`reference` - sort of like a pointer to another document), and the actual ***value***, the data
+contained in the field.  
+In addition to fields, documents can contain collections... which contain other documents... which
+can contain collections, and so on and so forth, allowing us to create a hierarchical structure
+within the database.
+
+More information about the Firestore data model can be found
+[here](https://firebase.google.com/docs/firestore/data-model).
+
+---
+
+After the database is initialized, create a collection (you can call it 'data' or whatever you want) with a single document (you can allow Firebase to give it an automatic unique ID) containing the data map we've been using so far, containing number fields.
+
+<img src=screenshots/document.png>
+
+#### Update the provider
+
+Time to update the `Provider` once again, this time to use our cloud-based database. We no longer need the `preferences` plugin and its setup, but we can keep it in the app in case we want to use it for something else.
+
+We no longer need to initialize something in the constructor, so we can delete it. We will create two async methods for fetching and updating the data in the database.
+
+In order to fetch the information, we use the name of the collection and the `documentID` and `await` for the network response. We then extract the `data_map` field from the response and convert it to a `Map<String, double>`.
+
+```dart
+Future<Map<String, double>> fetchDataMap() async {
+  DocumentSnapshot snap =
+      await _db.collection('data').document('vztH0rlKnqYCOyzK11HS').get();
+
+  _dataMap = Map<String, double>.from(snap.data['data_map']
+      .map((key, value) => MapEntry(key, value.toDouble())));
+
+  notifyListeners();
+
+  return _dataMap;
+}
+```
+
+Conversion is relatively easy to do because Firebase stores data as maps and our data model is a simple `Map`. For custom data classes, you would need to implement a way to convert between an instance of the class and a `DocumentSnapshot` or a map. **ACS UPB Mobile** does that by creating `extension`s on the data classes with methods like `fromSnap` and `toData` (a good example is [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/pages/portal/service/website_provider.dart)). Extensions extend the functionality of a class by adding new attributes, constructors or methods. They are usually made on classes you cannot modify (such as pre-defined classes like `StatelessWidget` or even `String`), but in our case help with the separation of concerns. The data layer should not have any database-specific functionality (as per the design pattern we described in the [Passing data](#passing-data) section), hence why we define this behavior in the service layer (our provider).
+
+The process of updating data is fairly similar:
+
+```dart
+void updateDataMap(Map<String, double> newDataMap) async {
+  DocumentReference ref =
+      _db.collection('data').document('vztH0rlKnqYCOyzK11HS');
+
+  await ref.updateData({'data_map': newDataMap});
+}
+```
+
+Our setter will now call `updateDataMap` instead of updating the preferences. We won't bother waiting for it, but depending on the situation, in other apps you may want to wait and report an error if it occurs. You could, for instance, wrap the call in a `try`/`catch` block.
+
+```dart
+set dataMap(Map<String, double> newDataMap) {
+  _dataMap = newDataMap;
+  updateDataMap(newDataMap);
+  notifyListeners();
+}
+```
+
+The `dataMap` field now acts as a simple in-memory cache. It will be `null` if `fetchDataMap` was not called successfully, therefore we must change `MainPage` to make sure it does call it.
+
+#### Update the layout
+
+Flutter has a very useful widget for dealing with futures, called a `FutureBuilder`. It can display something different depending on whether the future is complete or not. We will use it as the body of our scaffold, and make it display a progress indicator while waiting for the data, a pie chart if the data is fetched successfully or an error message otherwise.
+
+```dart
+body: FutureBuilder<Map<String, double>>(
+    future: Provider.of<DataProvider>(context).fetchDataMap(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasError) {
+          print(snapshot.error);
+          return Center(child: Text('Something went wrong.'));
+        }
+        return PieChart(
+          dataMap: snapshot.data ?? {},
+          legendPosition: LegendPosition.top,
+        );
+      } else {
+        return Center(child: CircularProgressIndicator());
+      }
+    })
+```
+
+If you run the app, it should now display the "Something went wrong" error message. If you look at the console, you will see an error like `W/Firestore(32521): (21.3.0) [Firestore]: Listen for Query(data/vztH0rlKnqYCOyzK11HS) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}`. We will fix it in a bit, for now let's try to open the edit page. You'll see the ugly Flutter exception screen because we don't deal with a lack of data in this page. The simplest way to do that is by updating the body of the scaffold to check whether the cached `dataMap` is `null`:
+
+```dart
+body: (dataMap == null)
+          ? Center(child: Text('No data to edit'))
+          : Padding(
+            ...
+```
+
+Now that the edit page handles lack of data, we can do even more - restrict access to it altogether if there is nothing to edit. If the `onPressed` callback of an `IconButton` is `null`, the button will appear disabled and will not respond to touch:
+
+```dart
+IconButton(
+  icon: Icon(Icons.edit),
+  onPressed: dataMap == null
+      ? null
+      : () => Navigator.of(context).pushNamed('/edit'),
+)
+```
+
+Do keep in mind that users on the web version can still access the edit page by changing the URL, so it's important that we handle the `null` value inside the page as well as restricting access.
+
+#### Check permissions
+
+Now, to fix the `PERMISSION_DENIED` error. We need to allow read/write access to our `data` collection from the Firebase console. Go back to the database and open the *Rules* menu. Here we can define custom security rules which control who can do what in our database. You can find more information about Firebase Security Rules [here](https://firebase.google.com/docs/rules), but for now we will simply allow access to our collection by changing the rules like this:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /data/{data}/{document=**} {
+    	allow read, write: if true
+    }
+  }
+}
+```
+
+Publish the rules and reload the app. The pie chart should now show, but the edit button will probably still be greyed out - for it to be updated accordingly, you would need to wrap the entire `Scaffold` into a `FutureBuilder` and use the data from the snapshot to verify whether the button should be disabled. You can do that later, for now just restarting the app should do the trick.
+
+If the data fetching is very fast and you'd like to make sure that the loading indicator works as expected, you might need to make the `fetchDataMap` take longer. You can temporarily add something like `await Future.delayed(Duration(seconds: 5))` to make it last 5 seconds longer so you have time to see the progress indicator.
+
+Try to edit the chart while having the document open in the Firebase console. You will see it update immediately! Now whoever uses the app can see and make live updates. If something isn't working correctly, you can check the code [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/firestore) (just remember to use your own configuration and unique `documentID`).
 
 ## Start contributing
 
