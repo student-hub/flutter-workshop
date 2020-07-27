@@ -3,6 +3,7 @@
 This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it.
 
 **Table of contents**
+* [Start contributing](#start-contributing)
 * [Get started with Flutter](#get-started-with-flutter)
   + [What **is** Flutter?](#what---is---flutter-)
   + [Create a new Flutter application](#create-a-new-flutter-application)
@@ -39,7 +40,21 @@ This workshop is meant to help you get started with Flutter and contributing to 
       - [Update the provider](#update-the-provider)
       - [Update the layout](#update-the-layout)
       - [Check permissions](#check-permissions)
-* [Start contributing](#start-contributing)
+
+## Start contributing
+
+In order to start contributing, simply follow these 10 steps:
+
+1. Please make sure you've read the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
+2. Fork the [ACS UPB Mobile](https://github.com/acs-upb-mobile/acs-upb-mobile) repository.
+3. Clone the fork onto your system and open it as an Android Studio project.
+4. Don't forget to run `flutter pub get` to update the dependencies.
+5. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
+6. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
+7. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request).
+8. Wait for the PR to be approved.
+9. ???
+10. Profit!
 
 ## Get started with Flutter
 
@@ -1085,18 +1100,3 @@ Publish the rules and reload the app. The pie chart should now show, but the edi
 If the data fetching is very fast and you'd like to make sure that the loading indicator works as expected, you might need to make the `fetchDataMap` take longer. You can temporarily add something like `await Future.delayed(Duration(seconds: 5))` to make it last 5 seconds longer so you have time to see the progress indicator.
 
 Try to edit the chart while having the document open in the Firebase console. You will see it update immediately! Now whoever uses the app can see and make live updates. If something isn't working correctly, you can check the code [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/firestore) (just remember to use your own configuration and unique `documentID`).
-
-## Start contributing
-
-In order to start contributing, simply follow these 10 steps:
-
-1. Please make sure you've read the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
-2. Fork the [ACS UPB Mobile](https://github.com/acs-upb-mobile/acs-upb-mobile) repository.
-3. Clone the fork onto your system and open it as an Android Studio project.
-4. Don't forget to run `flutter pub get` to update the dependencies.
-5. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
-6. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
-7. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request).
-8. Wait for the PR to be approved.
-9. ???
-10. Profit!
