@@ -84,6 +84,22 @@ You can make the emulator window display on top of the IDE by going to Extended 
 
 ---
 
+---
+
+**Troubleshooting tips**
+
+<img align="right" src=https://www.cipher-it.co.uk/wp-content/uploads/2017/11/ITCrow.jpg width=300>
+
+If Android Studio doesn't work properly (it doesn't highlight the code and errors or make suggestions), it may be a good idea to restart it. Click `File` > `Invalidate Caches / Restart` and hope for the best.
+
+If the app doesn't work as expected, try restarting it (Hot Reload doesn't work with major code/flow changes). If that still doesn't work and you think your code is correct, you can try re-building it from scratch (run `flutter clean` to delete build files and then try `flutter run` or pressing the play button/*Shift*+*F10* again).
+
+Finally, if you see weird errors like classes not getting recognized, make sure Flutter is up to date (run `flutter upgrade`) and you're on the right branch (e.g. `flutter channel beta` if you're using the web version). Additionally, keep your dependencies up to date by running `flutter pub get`.
+
+<br clear="right">
+
+---
+
 Subsequent sections will link to a tag in this repository which has the code you should end up with at the end of that section. You can use them to skip a section or cross-check your code if you have a problem. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/new_app).
 
 ### Change it up
@@ -401,7 +417,7 @@ Keep in mind that, since **ACS UPB Mobile** is localized (works in both English 
 
 #### Build the data rows
 
-Now, we need to add a row for each entry in the datamap. To keep things clean, create a method (`List<Widget> buildTextFields(Map<String, double> dataMap, BuildContext context)`) that generates a row with two `TextFormField` widgets for each (key, value) pair in the map. We only want to modify the values, so make the field that corresponds to the key (the name) `readOnly`. The value field should only accept numerical values (*hint*: check the `keyboardType` attribute).
+Now, we need to add a row for each entry in the datamap. To keep things clean, create a method (`List<Widget> buildTextFields(Map<String, double> dataMap, BuildContext context)`) in the `MainPage` class, that generates a row with two `TextFormField` widgets for each (key, value) pair in the map. We only want to modify the values, so make the field that corresponds to the key (the name) `readOnly`. The value field should only accept numerical values (*hint*: check the `keyboardType` attribute).
 
 For a nicer look, you can add some padding to these rows and some spacing between the columns (don't forget the header). Padding between list items can be added using a `SizedBox` instead of a `Padding` widget, if you want to avoid unnecessary nesting.
 
@@ -445,7 +461,7 @@ For a nicer look, you can add some padding to these rows and some spacing betwee
 
 </details><br>
 
-Concatenate the result to the end of the `ListView`'s children (`ListView(children: [...] + buildTextFields(dataMap, context))`) and you should now have a table that looks like this:
+Concatenate the result to the end of the `ListView`'s children, before the comma (`ListView(children: [...] + buildTextFields(dataMap, context),)`) and you should now have a table that looks like this:
 
 <img src=screenshots/table.png>
 
@@ -484,7 +500,7 @@ Android Studio to the rescue again! It's easy to convert a stateless widget into
 
 ---
 
-Alongside the `build` method, which is called every time the widget is updated, stateful widgets have an `initState` method that is called on the first build. Let's make the `dataMap` a class attribute and initialize it in `initState`:
+Alongside the `build` method, which is called every time the widget is updated, stateful widgets have an `initState` method that is called on the first build. Let's make the `dataMap` a class attribute and initialize it in `initState` **instead of** `build`:
 
 ```dart
 class _MainPageState extends State<MainPage> {
@@ -602,7 +618,7 @@ Right now, each page uses a separate data map. If we used `MaterialPageRoute` an
 
 `Provider` is a dependency injection framework which can be used to manage state in a Flutter application. `Provider`s offer an easy way to encapsulate state and share it with a branch of the widget tree. It achieves that by being defined as the parent of that branch.
 
-Install the [provider](https://pub.dev/packages/provider) package and create a new source file called `data_provider.dart` in the `lib/` folder. Define the `DataProvider` class here, like this:
+Install the [provider](https://pub.dev/packages/provider) package (don't forget to run `flutter pub get`) and create a new source file called `data_provider.dart` in the `lib/` folder. Define the `DataProvider` class here, like this:
 
 ```dart
 class DataProvider with ChangeNotifier {
@@ -675,7 +691,7 @@ class _EditPageState extends State<EditPage> {
 }
 ```
 
-The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
 
 <img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
 
