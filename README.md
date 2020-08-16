@@ -100,7 +100,9 @@ Finally, if you see weird errors like classes not getting recognized, make sure 
 
 ---
 
-Subsequent sections will link to a tag in this repository which has the code you should end up with at the end of that section. You can use them to skip a section or cross-check your code if you have a problem. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/new_app).
+Subsequent sections will link to a tag in this repository which has the code you should end up with at the end of that section. You can use them to skip a section or cross-check your code if you have a problem. Keep in mind that the code snippets in this document are often not complete, since they are only meant to help you understand what you need to do. Avoid copy-pasting and try solving problems yourself before opening **Spoiler** sections or looking up the complete code in this repository.
+
+The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/new_app).
 
 ### Change it up
 
@@ -641,7 +643,24 @@ class DataProvider with ChangeNotifier {
 }
 ```
 
-It initialized the data map that we know in the constructor, and has a custom getter and setter - with the setter calling `notifyListeners()` to notify any widget that is using this `Provider` about the change. Now add it to the root of the application:
+It initialized the data map that we know in the constructor, and has a custom getter and setter - with the setter calling `notifyListeners()` to notify any widget that is using this `Provider` about the change.
+
+---
+
+**IntelliSense tip #5: auto import**
+
+When using a class for a first time in a file, you need to specify the library you want to import it from (be it part of the framework, a package, or your own codebase). You never need to actually remember the library because Android Studio gives you options to import when you start typing the class name, like with the `ChangeNotifier` we just used:
+
+<img src=screenshots/import.png><br>
+
+Just select the right option (look at the package name on the right side) and press *Tab* or *Enter* to confirm, and Android Studio will automatically add a line like `import 'package:flutter/foundation.dart';` to the beginning of the file. If you want to order the imports (alphabetically), you can press *Ctrl*+*Alt*+*O*.
+
+Note that some framework components, like `ChangeNotifier`, can be found in multiple libraries. The one you choose to import won't affect the functionality, but we usually prefer to go with the narrow-scope libraries if possible. In this case, the rule of thumb would be:
+*`foundation.dart` (Core Flutter framework) > `widgets.dart` (Flutter widgets framework) > `material.dart` (Android-like/Material Design components, used most often in **ACS UPB Mobile**) > `cupertino.dart` (iOS design components)*
+
+---
+
+Now add the provider you created to the root of the application:
 
 ```dart
 void main() {
