@@ -49,12 +49,19 @@ In order to start contributing, simply follow these 10 steps:
 2. Fork the [ACS UPB Mobile](https://github.com/acs-upb-mobile/acs-upb-mobile) repository.
 3. Clone the fork onto your system and open it as an Android Studio project.
 4. Don't forget to run `flutter pub get` to update the dependencies.
-5. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
-6. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
-7. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request).
-8. Wait for the PR to be approved.
-9. ???
-10. Profit!
+5. Create a new branch by clicking on *Git: master* on the bottom right border in Android Studio and selecting *New Branch*. Its name should succinctly describe the modification/feature you are trying to add, so in this case something like `update_contributors` would be appropriate.
+6. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
+7. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
+8. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request). Make sure the PR points from the branch you created to the master branch in the acs-upb-mobile repo.
+9. Wait for the PR to be approved.
+10. Pat yourself on the back.
+
+Once in a while you should sync your fork's master with the upstream (the original repo) master. To do this:
+1. In the repo on your machine add a new remote that points to **acs-upb-mobile/master** using the command: `git remote add upstream https://github.com/acs-upb-mobile/acs-upb-mobile.git`.
+2. Fetch the data from the upstream repo: `git fetch upstream`.
+3. Checkout your fork's `master` branch: `git checkout master`.
+4. Merge `upstream` into your fork's `master`: `git merge upstream/master`. This may produce conflicts, unfortunately. To fix them, open the *VCS* menu in Android Studio, select *Git* and *Resolve conflicts*.
+5. Push `master` to save the sync to GitHub either by using the Android Studio GUI or by calling `git push origin/master`.
 
 ## Get started with Flutter
 
