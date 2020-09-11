@@ -1,45 +1,44 @@
 # ACS UPB Mobile - Flutter workshop
 
-This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it.
+This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it. The estimated time for completing the workshop is roughly 3h. 
 
-**Table of contents**
-* [Start contributing](#start-contributing)
-* [Get started with Flutter](#get-started-with-flutter)
-  + [What **is** Flutter?](#what---is---flutter-)
-  + [Create a new Flutter application](#create-a-new-flutter-application)
-  + [Change it up](#change-it-up)
-  + [Create the layout](#create-the-layout)
-    - [AppBar](#appbar)
-    - [Card](#card)
-  + [Add the content](#add-the-content)
-    - [Import a package](#import-a-package)
-    - [Use the package](#use-the-package)
-    - [Check orientation](#check-orientation)
-  + [Make it interactive](#make-it-interactive)
-    - [Start with the header](#start-with-the-header)
-    - [Build the data rows](#build-the-data-rows)
-    - [Update the datamap](#update-the-datamap)
-  + [Add another page](#add-another-page)
-    - [New home page](#new-home-page)
-    - [Navigating between pages](#navigating-between-pages)
-    - [Passing data](#passing-data)
-  + [Test it](#test-it)
-  + [Make data persistent](#make-data-persistent)
-    - [Enable the plugin](#enable-the-plugin)
-    - [Handle the data](#handle-the-data)
-    - [Fix the tests](#fix-the-tests)
-  + [Add improvements](#add-improvements)
-* [Get started with Firebase](#get-started-with-firebase)
-  + [Add Firebase to your app(s)](#add-firebase-to-your-app-s-)
-    - [Enable the FlutterFire plugins](#enable-the-flutterfire-plugins)
-    - [Add Firebase to Android](#add-firebase-to-android)
-    - [Add Firebase to iOS](#add-firebase-to-ios)
-    - [Add Firebase to Web and host the app](#add-firebase-to-web-and-host-the-app)
-  + [Use Firestore in the app](#use-firestore-in-the-app)
-      - [Create the database](#create-the-database)
-      - [Update the provider](#update-the-provider)
-      - [Update the layout](#update-the-layout)
-      - [Check permissions](#check-permissions)
+- [Start contributing](#start-contributing)
+- [Get started with Flutter](#get-started-with-flutter)
+  * [What **is** Flutter?](#what---is---flutter-)
+  * [Create a new Flutter application - 10 mins](#create-a-new-flutter-application---10-mins)
+  * [Change it up - 10 mins](#change-it-up---10-mins)
+  * [Create the layout - 25 mins](#create-the-layout---25-mins)
+    + [AppBar](#appbar)
+    + [Card](#card)
+  * [Add the content - 12 mins](#add-the-content---12-mins)
+    + [Import a package - 5 mins](#import-a-package---5-mins)
+    + [Use the package - 5 mins](#use-the-package---5-mins)
+    + [Check orientation - 2 mins](#check-orientation---2-mins)
+  * [Make it interactive - 40 mins](#make-it-interactive---40-mins)
+    + [Start with the header - 10 mins](#start-with-the-header---10-mins)
+    + [Build the data rows - 20 mins](#build-the-data-rows---20-mins)
+    + [Update the datamap - 10 mins](#update-the-datamap---10-mins)
+  * [Add another page - 45 mins](#add-another-page---45-mins)
+    + [New home page - 13 mins](#new-home-page---13-mins)
+    + [Navigating between pages - 7 mins](#navigating-between-pages---7-mins)
+    + [Passing data - 25 mins](#passing-data---25-mins)
+  * [Test it - 8 mins](#test-it---8-mins)
+  * [Make data persistent - 20 mins](#make-data-persistent---20-mins)
+    + [Enable the plugin - 5 mins](#enable-the-plugin---5-mins)
+    + [Handle the data - 12 mins](#handle-the-data---12-mins)
+    + [Fix the tests - 3 mins](#fix-the-tests---3-mins)
+  * [Add improvements](#add-improvements)
+- [Get started with Firebase](#get-started-with-firebase)
+  * [Add Firebase to your app(s)](#add-firebase-to-your-app-s-)
+    + [Enable the FlutterFire plugins](#enable-the-flutterfire-plugins)
+    + [Add Firebase to Android](#add-firebase-to-android)
+    + [Add Firebase to iOS](#add-firebase-to-ios)
+    + [Add Firebase to Web and host the app](#add-firebase-to-web-and-host-the-app)
+  * [Use Firestore in the app](#use-firestore-in-the-app)
+    + [Create the database](#create-the-database)
+    + [Update the provider](#update-the-provider)
+    + [Update the layout](#update-the-layout)
+    + [Check permissions](#check-permissions)
 
 ## Start contributing
 
@@ -71,7 +70,7 @@ First of all, let's talk a bit about Flutter. It is a cross-platform framework d
 
 In order to familiarize yourself with Dart, please go through this simple, 20-minute [codelab](https://codelabs.developers.google.com/codelabs/from-java-to-dart/) before proceeding with this workshop.
 
-### Create a new Flutter application
+### Create a new Flutter application - 10 mins
 
 Open Android Studio and create a new Flutter application. The sample app is very well explained through comments and it will help you understand the absolute basics of using Flutter. Analyze the folder structure and carefully read the following files:
 - `lib/main.dart`, which is the application itself
@@ -111,7 +110,7 @@ Subsequent sections will link to a tag in this repository which has the code you
 
 The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/new_app).
 
-### Change it up
+### Change it up - 10 mins
 
 Now that we have the basics covered, it's time to code. We'll start by butchering the sample app - first, let's change the colours. Remove the `primarySwatch` attribute from `ThemeData` and set `primaryColor` and `accentColor` to the ones in **ACS UPB Mobile** (*hint*: you can find them [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/main.dart)). Note what changes in the app with each attribute.
 
@@ -132,7 +131,7 @@ A Flutter app is essentially a *widget tree*. Most widgets don't need to be leav
 
 The most important method in a Widget is the `build` method, which describes the part of the UI represented by that widget. This method takes a `BuildContext` parameter, which has information about the location in the tree where the widget builds.
 
-### Create the layout
+### Create the layout - 25 mins
 
 We will now attempt to create a layout similar to the grading view in **ACS UPB Mobile**:
 
@@ -256,11 +255,11 @@ The code that corresponds to this section can be found [here](https://github.com
 
 <img src=screenshots/layout.png height=500>
 
-### Add the content
+### Add the content - 12 mins
 
 We're ready to add the actual content!
 
-#### Import a package
+#### Import a package - 5 mins
 
 Even though Flutter is a fairly new technology, the community is very active, and because it is open source there are countless available resources online that you can use. A good rule of thumb is, *don't try to reinvent the wheel*. Before starting to work on something, check if someone has done it before. You might find a useful package that you can add to the app, or maybe even a sample app that you can copy and modify for your needs.
 
@@ -283,7 +282,7 @@ You can see the latest version in the package's name. Specifying it is not manda
 
 Android Studio will prompt you to run `flutter pub get` to update the dependencies of your project. Do so.
 
-#### Use the package
+#### Use the package - 5 mins
 
 Read the documentation of `pie_chart` and use the simple example to place a pie chart in our `Card`.
 
@@ -325,7 +324,7 @@ Read the documentation of `pie_chart` and use the simple example to place a pie 
 
 Normally, we shouldn't do complex operations like populating a dataset in the build method, because *it is called every time the page is reloaded or something changes*. This is particularly important for stateful widgets, which are rebuilt often.
 
-#### Check orientation
+#### Check orientation - 2 mins
 
 Hot Reload and look at the app. Now we have the pie chart and it looks alright! However, check what happens if you rotate the device. You will most likely see an overflow. Can you tell why it happens?
 
@@ -375,11 +374,11 @@ The code that corresponds to this section can be found [here](https://github.com
 
 <img src=screenshots/content.png height=500>
 
-### Make it interactive
+### Make it interactive - 40 mins
 
 We want the user to be able to change the values of the items in the datamap, so we'll make an editable table containing two columns: *Name* (not editable) and *Value* (editable).
 
-#### Start with the header
+#### Start with the header - 10 mins
 
 Let's add a header just under the card, with the *Name* label taking up 3/4 of the horizontal space, and the *Value* label the other 1/4 (*hint*: the wigets you need are `Row`, `Expanded` and `Text`). We should give it a padding as well - the standard 8 pixels on each side looks good.
 
@@ -424,7 +423,7 @@ It should now look like this:
 
 Keep in mind that, since **ACS UPB Mobile** is localized (works in both English and Romanian), you will never have to type string literals in the code itself, since everything needs to be defined in both languages in the localization files. The [Flutter Intl](https://plugins.jetbrains.com/plugin/13666-flutter-intl) Android Studio plugin generates localization code automatically, so make sure you have it installed. Say we need to define the strings for "Name" and "Value" - we would need to define them in [intl_en.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_en.arb) and [intl_ro.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_ro.arb) (the plugin fires automatically when we save an .arb file), and then use them in the code as `S.of(context).name` and `S.of(context).value`.
 
-#### Build the data rows
+#### Build the data rows - 20 mins
 
 Now, we need to add a row for each entry in the datamap. To keep things clean, create a method (`List<Widget> buildTextFields(Map<String, double> dataMap, BuildContext context)`) in the `MainPage` class, that generates a row with two `TextFormField` widgets for each (key, value) pair in the map. We only want to modify the values, so make the field that corresponds to the key (the name) `readOnly`. The value field should only accept numerical values (*hint*: check the `keyboardType` attribute).
 
@@ -474,7 +473,7 @@ Concatenate the result to the end of the `ListView`'s children, before the comma
 
 <img src=screenshots/table.png>
 
-#### Update the datamap
+#### Update the datamap - 10 mins
 
 You can now modify the values in the second column, but the datamap doesn't get updated. To update it, we should define the `TextFormField`'s `onChanged` callback. Add a `print` statement to make sure it gets called correctly.
 
@@ -544,17 +543,17 @@ onChanged: (newString) {
 }
 ```
 
-We can now change the value of the items in the data map and watch the pie chart update as we do that. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/interactive). The app should now look like this and be interactive:
+We can now change the value of the items in the data map and watch the pie chart update as we do that. Please keep in mind that the Hot Reload functionality does not work with major changes such as making a widget stateful. In order to run the app, rebuilding is necessary. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/interactive). The app should now look like this and be interactive:
 
 <img src=screenshots/interactive.png height=500>
 
-### Add another page
+### Add another page - 45 mins
 
 Now, what do we do if we want to have another page? And more importantly, what do we do if we want to share data between those pages?
 
 Say we want our home page to contain just the chart, centered and with the legend placed at the top. On the right side of the scaffold, we'd have an edit button that takes us to the page we've already build.
 
-#### New home page
+#### New home page - 13 mins
 
 Let's rename our stateful widget to `EditPage` and create a new `MainPage` widget with the characteristics above. Leave out the edit button for now. You can put each of them in their own file to avoid having a very large `main.dart` file. You can also change the title on the app bar for each of them accordingly ('View chart'/'Edit chart').
 
@@ -586,7 +585,7 @@ Let's rename our stateful widget to `EditPage` and create a new `MainPage` widge
 
 </details>
 
-#### Navigating between pages
+#### Navigating between pages - 7 mins
 
 Now, we need to add the edit button to the scaffold's app bar. This is done by adding an `IconButton` as an `action` to the `AppBar`. The `onPressed` callback on this button uses `Navigator` to open an `EditPage`.
 
@@ -621,7 +620,7 @@ Navigator.of(context).pushNamed('/edit')
 
 An interesting effect of using named routes is that they are accessible through the URL in the web version. Try running the app on the web, by selecting "Chrome (web)" from the device dropdown. You will notice that, if the URL is, for instance, 'http://localhost:52755/#/', you can access 'http://localhost:52755/#/edit' to get to the edit page.
 
-#### Passing data
+#### Passing data - 25 mins
 
 Right now, each page uses a separate data map. If we used `MaterialPageRoute` and built the `EditPage` instance in the `MainPage` to navigate, we could technically pass the data map as a parameter to `EditPage`'s constructor. However, changes made on the edit page would still not be visible on the main page, since we couldn't notify the main page of the changes. There are multiple ways to handle this, but **ACS UPB Mobile** uses the [provider](https://pub.dev/packages/provider) package.
 
@@ -717,7 +716,7 @@ class _EditPageState extends State<EditPage> {
 }
 ```
 
-The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page, and the app should look like this:
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page. After rebuilding the app and running it, you should see something like this:
 
 <img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
 
@@ -736,7 +735,7 @@ With BLoC, every page in the app will have three components:
 - the *data layer* or the data *model* contains simple data classes which represent the data that is to be displayed in the UI, and is provided by the BLoC (in this workshop, we don't need a custom class because we simply use a `Map<String, double>` as our model)
 ---
 
-### Test it
+### Test it - 8 mins
 
 Now we have the functionality we wanted, but we've only tested it manually. Let's add some automated testing in the `test/widget_test.dart` file.
 
@@ -831,11 +830,11 @@ Ideally, every new feature should have its own tests or at least be added to the
 
 ---
 
-### Make data persistent
+### Make data persistent - 20 mins
 
 Our app is now interactive and we can modify the chart data as we please. However, these modifications are not persistent - they are lost if we restart the app. The go-to way to persist data is by using a database (e.g. [SQLite](https://flutter.dev/docs/cookbook/persistence/sqlite), [Hive](https://medium.com/@alexawaikin/hive-for-flutter-fast-local-storage-database-made-with-dart-167ad63e2d1) or [Firebase](https://flutter.dev/docs/development/data-and-backend/firebase), see section [Get started with Firebase](#get-started-with-firebase)), but for very simple data such as ours, we can store key-value data on the disk using the [`shared_preferences`](https://pub.dev/packages/shared_preferences) plugin. It works by wrapping platform-specific persistent storage for simple data (`NSUserDefaults` on iOS and macOS, `SharedPreferences` on Android, etc.).
 
-#### Enable the plugin
+#### Enable the plugin - 5 mins
 
 **ACS UPB Mobile** uses the [`preferences`](https://pub.dev/packages/preferences) plugin (which in turn depends on `shared_preferences`) to store simple data such as settings. Let's use this in our app as well, add the dependency to the `pubspec.yaml` file.
 
@@ -869,7 +868,7 @@ To understand asynchronous programming in Dart, consider completing [this 50-min
 
 ---
 
-#### Handle the data
+#### Handle the data - 12 mins
 
 The `shared_preferences` plugin only allows for the following data types to be stored under a key: `bool`, `double`, `int`, `String`, `List<String>`. Because we'd like to store a `Map<String, double>`, we could store it as two string lists. Note that **you should never do this with more complex data**, as it adds the overhead of converting between collections, when the whole point of `Map`s in general is to be very fast.
 
@@ -915,7 +914,7 @@ We need the `Iterable<T>.from` calls to convert between different types of itera
 
 Run the app - it should work the same way as before, except if you close it and open it again, the changes will still be there.
 
-#### Fix the tests
+#### Fix the tests - 3 mins
 
 Every time you change something or do something new, you need to remember to run the tests before committing to the repository. If we try to run our tests now, they will fail because `PrefService` was not initialised.
 
