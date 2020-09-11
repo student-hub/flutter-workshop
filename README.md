@@ -716,7 +716,7 @@ class _EditPageState extends State<EditPage> {
 }
 ```
 
-The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page. After rebuilding the app and running it, the app should look like this:
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page. After rebuilding the app and running it, you should see something like this:
 
 <img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
 
