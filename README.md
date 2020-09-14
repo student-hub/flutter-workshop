@@ -42,6 +42,8 @@ This workshop is meant to help you get started with Flutter and contributing to 
 
 ## Start contributing
 
+If you're not familiar with git, consider learning the basics from one of the many resources available online. We recommend [GitHub's resources](https://try.github.io/), particularly the [Git-It](https://github.com/jlord/git-it-electron) hands-on tutorial.
+
 In order to start contributing, simply follow these 10 steps:
 
 1. Please make sure you've read the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
