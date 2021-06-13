@@ -1,6 +1,6 @@
 # ACS UPB Mobile - Flutter workshop
 
-This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it. The estimated time for completing the workshop is roughly 3h. 
+This workshop is meant to help you get started with Flutter and contributing to the **ACS UPB Mobile** app. We will be using the app as reference throughout the workshop, so please make sure you follow the steps described [here](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/README.md#building-from-source-with-android-studio) to build and run it. The estimated time for completing the workshop is roughly 4h, but it can take longer if you follow the additional resource links. If you feel the time estimates are inaccurate or want to fill in the missing estimates, feel free to open a PR on this repo directly to fix them. 
 
 - [Start contributing](#start-contributing)
 - [Get started with Flutter](#get-started-with-flutter)
