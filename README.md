@@ -4,7 +4,7 @@ This workshop is meant to help you get started with Flutter and contributing to 
 
 - [Start contributing](#start-contributing)
 - [Get started with Flutter](#get-started-with-flutter)
-  * [What **is** Flutter?](#what---is---flutter-)
+  * [What **is** Flutter?](#what-is-flutter)
   * [Create a new Flutter application - 10 mins](#create-a-new-flutter-application---10-mins)
   * [Change it up - 10 mins](#change-it-up---10-mins)
   * [Create the layout - 25 mins](#create-the-layout---25-mins)
@@ -46,16 +46,22 @@ If you're not familiar with git, consider learning the basics from one of the ma
 
 In order to start contributing, simply follow these 10 steps:
 
-1. Please make sure you've read the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
+1. Please make sure you've read through the [CONTRIBUTING.md](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/CONTRIBUTING.md) file.
 2. Fork the [ACS UPB Mobile](https://github.com/acs-upb-mobile/acs-upb-mobile) repository.
-3. Clone the fork onto your system and open it as an Android Studio project.
+3. Clone the fork onto your system (`git clone`) and open it as an Android Studio project.
 4. Don't forget to run `flutter pub get` to update the dependencies.
+
+|:question:|Something isn't working, I see a bunch of errors! What do I do?|
+|:--------:|:--------------------------------------------------------------|
+|  :bulb:  |Did you skip that part in the first paragraph about following the [Prerequisites](https://github.com/student-hub/acs-upb-mobile#prerequisites) section before moving forward? Make sure you have everything installed, and **the correct Flutter version checked out**. Finally, you can try the troubleshooting steps [here](https://github.com/student-hub/acs-upb-mobile/blob/master/README.md#not-working).|
+
+
 5. Create a new branch by clicking on *Git: master* on the bottom right border in Android Studio and selecting *New Branch*. Its name should succinctly describe the modification/feature you are trying to add, so in this case something like `update_contributors` would be appropriate.
 6. Add yourself to the list of contributors in the `README.md` file. The recommended format is: `[FirstName LastName](link_to_github_profile)`.
 7. Commit and push the changes to the forked repository (*Ctrl*+*K* for committing, *Ctrl*+*Shift*+*K* for pushing in Android Studio).
-8. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request). Make sure the PR points from the branch you created to the master branch in the acs-upb-mobile repo.
+8. Create a pull request either from GitHub (you will see a message prompting you to create a PR when you open the forked repository) or Android Studio (VCS > Git > Create Pull Request). Make sure the PR points from the branch you created to the master branch in the acs-upb-mobile repo. Give it a meaningful name (refer to [How to Write a Git Commit Message](https://cbea.ms/git-commit/)).
 9. Wait for the PR to be approved.
-10. Pat yourself on the back.
+10. Pat yourself on the back, you've made your first steps as an open source contributor!
 
 Once in a while you should sync your fork's master with the upstream (the original repo) master. To do this:
 1. In the repo on your machine add a new remote that points to **acs-upb-mobile/master** using the command: `git remote add upstream https://github.com/acs-upb-mobile/acs-upb-mobile.git`.
@@ -164,7 +170,7 @@ Keep in mind that **ACS UPB Mobile** uses a [custom scaffold](https://github.com
 
 The styled, elevated container that holds the pie chart in the screenshot above is called a `Card`. Let's try to create an empty card which takes up a third of the available space.
 
-First, for the `Card` to actually be visible in the app, it needs to hold *something*. We won't add the pie chart just yet, but we can use a placeholder for now. The standard way of defining an 'empty' widget is through a `Container` with no attributes set, like this:
+First, for the `Card` to actually be visible in the app, it needs to hold *something*. We won't add the pie chart just yet, but we can use a placeholder for now. The standard way of defining an 'empty' widget is through a `Container` or `SizedBox` with no attributes set, like this:
 
 ```dart
 Scaffold(
@@ -189,7 +195,7 @@ Card(
 
 Wait, what? What did we just do there? It's simple, let's take it step by step. You already know that the context defines the current location in the widget tree. The `.of(context)` call, by design, is meant to return an instance of the widget it's used on by going up the tree of the context that is passed. In our case, it returns an instance of `MediaQuery`, which holds information about the size of the current window.
 
-It is important to observe that this call returns the height of the screen itself (taking orientation into account). In other words, the card now takes up a third of the *entire screen*, not the available space in the scaffold. If we want the latter behaviour, we need to substract the height of the AppBar as follows:
+It is important to observe that this call returns the height of the screen itself (taking orientation into account). In other words, the card now takes up a third of the *entire screen*, not the available space in the scaffold. If we want the latter behaviour, we need to subtract the height of the AppBar as follows:
 
 ```dart
 Widget build(BuildContext context) {
@@ -213,7 +219,7 @@ If this seems complicated, that's because it is. There is a better way to obtain
 
 The two basic layout widgets in Flutter are `Row`s and `Columns`, which take  a list of widgets and position them accordingly. Orientation and alignment are defined by the *main axis* and the *cross axis*, as such:
 
-<img src=https://flutter.dev/assets/ui/layout/row-diagram-ad51795e19e3e1d412815b287c9caa694ad357892e3ab8b3ef1da0c4c6e011db.png> <img src=https://flutter.dev/assets/ui/layout/column-diagram-4e2ce8e33c32a09d090280fb7b2925baaf58f6de7876a551c207ab904e2fafc6.png>
+<img src=https://docs.flutter.dev/assets/images/docs/ui/layout/row-diagram.png> <img src=https://docs.flutter.dev/assets/images/docs/ui/layout/column-diagram.png>
 
 If we see our desired layout as a column, we want a card that takes up 1/3 of the available space, followed by an empty container that takes up the remaining 2/3. We can achieve this by using the `Expanded` widget's `flex` property like this:
 
@@ -282,7 +288,7 @@ dependencies:
 
 You can see the latest version in the package's name. Specifying it is not mandatory, but it is recommended. You will often see a caret next to the version specified in pubspec files (e.g. `pie_chart: ^3.1.1`), symbolising "version 3.1.1 or the newest compatible version", or ">=3.1.1 <4.0.0", since a new major version usually implies breaking changes.
 
-Android Studio will prompt you to run `flutter pub get` to update the dependencies of your project. Do so.
+Android Studio will prompt you to run `flutter pub get` to update the dependencies of your project. Do so. If you see any issues, feel free to fall back to using 3.1.1 as the version - maybe since we've written this workshop, things have changed in the package and it doesn't work as it used to. For any package we use here, you can refer to the [pubspec.yaml](pubspec.yaml) file to see what version we've used when setting up the workshop.
 
 #### Use the package - 5 mins
 
@@ -423,7 +429,7 @@ It should now look like this:
 
 </details><br>
 
-Keep in mind that, since **ACS UPB Mobile** is localized (works in both English and Romanian), you will never have to type string literals in the code itself, since everything needs to be defined in both languages in the localization files. The [Flutter Intl](https://plugins.jetbrains.com/plugin/13666-flutter-intl) Android Studio plugin generates localization code automatically, so make sure you have it installed. Say we need to define the strings for "Name" and "Value" - we would need to define them in [intl_en.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_en.arb) and [intl_ro.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_ro.arb) (the plugin fires automatically when we save an .arb file), and then use them in the code as `S.of(context).name` and `S.of(context).value`.
+Keep in mind that, since **ACS UPB Mobile** is localized (works in both English and Romanian), you will never have to type string literals in the code itself, since everything needs to be defined in both languages in the localization files. The [Flutter Intl](https://plugins.jetbrains.com/plugin/13666-flutter-intl) Android Studio plugin generates localization code automatically, so make sure you have it installed. Say we need to define the strings for "Name" and "Value" - we would need to define them in [intl_en.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_en.arb) and [intl_ro.arb](https://github.com/acs-upb-mobile/acs-upb-mobile/blob/master/lib/l10n/intl_ro.arb) (the plugin fires automatically when we save an .arb file), and then use them in the code as `S.current.name` and `S.current.value`.
 
 #### Build the data rows - 20 mins
 
@@ -510,7 +516,7 @@ Android Studio to the rescue again! It's easy to convert a stateless widget into
 
 ---
 
-Alongside the `build` method, which is called every time the widget is updated, stateful widgets have an `initState` method that is called on the first build. Let's make the `dataMap` a class attribute and initialize it in `initState` **instead of** `build`:
+Alongside the `build` method, which is called every time the widget is updated, stateful widgets have an `initState` method that is called on the first build. It's kind of like a constructor for the `State`. Let's make the `dataMap` a class attribute and initialize it in `initState` **instead of** `build`:
 
 ```dart
 class _MainPageState extends State<MainPage> {
@@ -545,7 +551,9 @@ onChanged: (newString) {
 }
 ```
 
-We can now change the value of the items in the data map and watch the pie chart update as we do that. Please keep in mind that the Hot Reload functionality does not work with major changes such as making a widget stateful. In order to run the app, rebuilding is necessary. The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/interactive). The app should now look like this and be interactive:
+We can now change the value of the items in the data map and watch the pie chart update as we do that. Please keep in mind that the Hot Reload functionality does not work with major changes such as making a widget stateful. In order to run the app, rebuilding is necessary.
+ 
+The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/interactive). The app should now look like this and be interactive:
 
 <img src=screenshots/interactive.png height=500>
 
@@ -718,7 +726,9 @@ class _EditPageState extends State<EditPage> {
 }
 ```
 
-The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there). The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page. After rebuilding the app and running it, you should see something like this:
+The `listen: false` attribute tells the provider that the particular context in which it is used does not need to listen for changes. In our case, the Edit page does not need to listen for changes, but the main page does (`listen` is `true` by default, so we don't need to specify it when using the Provider there).
+ 
+The code that corresponds to this section can be found [here](https://github.com/acs-upb-mobile/flutter-workshop/tree/pages). If you did everything correctly, the pie chart on the main page should now be updated when you press 'Save' on the edit page. After rebuilding the app and running it, you should see something like this:
 
 <img src=screenshots/main.png height=500> <img src=screenshots/edit.png height=500>
 
